@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         Log.d("MainActivity", "onResume");
 
         clearLocations();
-        drawLocations();
+        drawLocations();a
     }
 
     @Override
