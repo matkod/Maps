@@ -38,8 +38,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLongClickListener, LoaderManager.LoaderCallbacks<Cursor>, GoogleMap.OnMarkerClickListener {
 
-    public final static String CREATE_LOCATION = "com.example.mateus.maps.LOCATION";
-    public final static String LOCATION_LIST = "com.example.mateus.maps.LIST";
+    public final static String CREATE_LOCATION = "com.example.mateus.maps.CREATE";
+    public final static String LIST_LOCATION = "com.example.mateus.maps.LIST";
     public final static String EDIT_LOCATION = "com.example.mateus.maps.EDIT";
 
     private GoogleMap gm;
@@ -59,11 +59,12 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
 
         gm = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
         gm.setOnMapLongClickListener(this);
+        gm.setOnMarkerClickListener(this);
         gm.setMyLocationEnabled(true);
 
         if (savedInstanceState != null) {
             Log.d("MainActivity", "Carregando de savedInstanceState");
-            final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(LOCATION_LIST);
+            final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(LIST_LOCATION);
             LocationManager.getInstance().setLugares(tmp);
         }
 
@@ -139,8 +140,8 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d("MainActivity", "salvando...");
-        outState.putParcelableArrayList(LOCATION_LIST, lugares);
+        Log.d("MainActivity", "onsSaveInstanceState");
+        outState.putParcelableArrayList(LIST_LOCATION, lugares);
     }
 
     private void getPlace(String query) {
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
             markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(l.getLat(), l.getLng()));
             markerOptions.title(l.getNome());
+
             l.setMarker(gm.addMarker(markerOptions));
 
             l.setCircle(gm.addCircle(new CircleOptions()
@@ -299,14 +301,14 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
+        Log.d("marker", "click");
         for (int i = 0; i < lugares.size(); ++i) {
             final Lugar l = lugares.get(i);
 
             if (l.getMarker().equals(marker)) {
                 Intent intent = new Intent(this, EditLocationActivity.class);
                 intent.putExtra(EDIT_LOCATION, i);
-                //intent.putParcelableArrayListExtra(LOCATION_LIST, lugares);
+                //intent.putParcelableArrayListExtra(LIST_LOCATION, lugares);
                 startActivity(intent);
             }
         }

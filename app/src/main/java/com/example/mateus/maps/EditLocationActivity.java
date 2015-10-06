@@ -20,6 +20,8 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     private Lugar lugar;
     private ArrayList<Lugar> lugares;
 
+    private int position;
+
     private SeekBar radiusSeekbar;
     private TextView result;
 
@@ -35,11 +37,10 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
         radiusSeekbar = (SeekBar) findViewById(R.id.radiusSeekBar);
         radiusSeekbar.setOnSeekBarChangeListener(this);
-        radiusSeekbar.setProgress(50);
 
         result = (TextView) findViewById(R.id.tvResult);
 
-        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LOCATION_LIST);
+        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LIST_LOCATION);
         lugares = LocationManager.getInstance().getLugares();
 
         if (lugares == null) {
@@ -53,12 +54,18 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         if (latlng != null) {
             lugar = new Lugar("", latlng.latitude, latlng.longitude);
 
+            lugares.add(lugar);
+
+            position = lugares.size() - 1;
+
             Log.d("latlng", getIntent().getParcelableExtra(MainActivity.CREATE_LOCATION).toString());
         } else {
-            int position = getIntent().getIntExtra(MainActivity.EDIT_LOCATION, -1);
-            Lugar l = lugares.get(position);
-            radiusSeekbar.setProgress(l.getRaio());
-            ((TextView) findViewById(R.id.editTextName)).setText(l.getNome());
+            position = getIntent().getIntExtra(MainActivity.EDIT_LOCATION, -1);
+
+            lugar = lugares.get(position);
+
+            radiusSeekbar.setProgress(lugar.getRaio());
+            ((TextView) findViewById(R.id.editTextName)).setText(lugar.getNome());
 
         }
     }
@@ -80,6 +87,10 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_remove) {
+            lugares.remove(position);
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -96,10 +107,10 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
             lugar.setNome(nameView.getText().toString());
             lugar.setRaio(raioBar.getProgress());
 
-            lugares.add(lugar);
+            //lugares.add(lugar);
 
             Intent intent = new Intent(this, MainActivity.class);
-            //intent.putParcelableArrayListExtra(MainActivity.LOCATION_LIST, lugares);
+            //intent.putParcelableArrayListExtra(MainActivity.LIST_LOCATION, lugares);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         }

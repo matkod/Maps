@@ -19,7 +19,7 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.activity_list_location);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LOCATION_LIST);
+        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LIST_LOCATION);
         lugares = LocationManager.getInstance().getLugares();
         if (lugares == null) {
             lugares = new ArrayList<>();
