@@ -35,6 +35,7 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
         listview.setAdapter(adapter);
         //listview.setClickable(true);
         listview.setOnItemClickListener(this);
+        //TESTEE
     }
 
     @Override
