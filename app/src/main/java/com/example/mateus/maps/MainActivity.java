@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         if (savedInstanceState != null) {
             Log.d("MainActivity", "Carregando de savedInstanceState");
             final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(LIST_LOCATION);
-            LocationManager.getInstance().setLugares(tmp);
+            if (tmp != null)
+                LocationManager.getInstance().setLugares(tmp);
         }
 
         lugares = LocationManager.getInstance().getLugares();
@@ -132,15 +133,15 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         super.onResume();
 
         Log.d("MainActivity", "onResume");
-
-        clearLocations();
-        drawLocations();a
+        gm.clear();
+        //clearLocations();
+        drawLocations();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d("MainActivity", "onsSaveInstanceState");
+        Log.d("MainActivity", "onSaveInstanceState");
         outState.putParcelableArrayList(LIST_LOCATION, lugares);
     }
 

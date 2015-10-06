@@ -1,11 +1,12 @@
 package com.example.mateus.maps;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -19,10 +20,11 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.activity_list_location);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LIST_LOCATION);
         lugares = LocationManager.getInstance().getLugares();
-        if (lugares == null) {
-            lugares = new ArrayList<>();
+        if (savedInstanceState != null) {
+            final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(MainActivity.LIST_LOCATION);
+            if (tmp != null)
+                LocationManager.getInstance().setLugares(tmp);
         }
 
         final ListView listview = (ListView) findViewById(R.id.listView);
@@ -36,8 +38,18 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("ListLocationActivity", "onSaveInstanceState");
+        outState.putParcelableArrayList(MainActivity.LIST_LOCATION, lugares);
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, ((Lugar) parent.getItemAtPosition(position)).getNome(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, ((Lugar) parent.getItemAtPosition(position)).getNome(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, EditLocationActivity.class);
+        intent.putExtra(MainActivity.EDIT_LOCATION, position);
+        startActivity(intent);
     }
 
 }
