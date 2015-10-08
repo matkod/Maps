@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -15,13 +16,14 @@ import java.util.ArrayList;
 public class ListLocationActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ArrayList<Lugar> lugares;
+    private ListView listview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_location);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
-
+Log.d("ListloCATIONacTIVITY", "onCreate");
         lugares = LocationManager.getInstance().getLugares();
         if (savedInstanceState != null) {
             final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(MainActivity.LIST_LOCATION);
@@ -29,14 +31,19 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
                 LocationManager.getInstance().setLugares(tmp);
         }
 
-        final ListView listview = (ListView) findViewById(R.id.listView);
+        listview = (ListView) findViewById(R.id.listView);
 
         //final ListAdapter adapter = new LocationArrayAdapter(this, lugares);
         //final StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, lugares);
         final LocationBaseAdapter adapter = new LocationBaseAdapter(this, lugares);
         listview.setAdapter(adapter);
-        //listview.setClickable(true);
         listview.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ((BaseAdapter)listview.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
