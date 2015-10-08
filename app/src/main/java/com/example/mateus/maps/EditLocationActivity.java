@@ -1,6 +1,5 @@
 package com.example.mateus.maps;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -40,15 +40,14 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
         result = (TextView) findViewById(R.id.tvResult);
 
-        //lugares = getIntent().getParcelableArrayListExtra(MainActivity.LIST_LOCATION);
-        lugares = LocationManager.getInstance().getLugares();
-
-        if (lugares == null) {
-            Log.d("EditLocationActivity", "lugares null");
-            lugares = new ArrayList<>();
-        } else {
-            Log.d("EditLocationActivity", "lugares tem coisa");
+        if (savedInstanceState != null) {
+            Log.d("EditLocationActivity", "Carregando de savedInstanceState");
+            final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(MainActivity.LIST_LOCATION);
+            if (tmp != null)
+                LocationManager.getInstance().setLugares(tmp);
         }
+
+        lugares = LocationManager.getInstance().getLugares();
 
         LatLng latlng = getIntent().getParcelableExtra(MainActivity.CREATE_LOCATION);
         if (latlng != null) {
@@ -73,7 +72,7 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_location, menu);
+        getMenuInflater().inflate(R.menu.menu_edit_location, menu);
         return true;
     }
 
@@ -88,7 +87,7 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_remove) {
-            lugares.remove(position);
+            remove(true);
             finish();
             return true;
         }
@@ -97,22 +96,24 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("EditLocationActivity", "onSaveInstanceState");
+        outState.putParcelableArrayList(MainActivity.LIST_LOCATION, lugares);
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
 
         if (id == R.id.btSaveLocation) {
-            TextView nameView = (TextView) findViewById(R.id.editTextName);
-            SeekBar raioBar = (SeekBar) findViewById(R.id.radiusSeekBar);
+            save(true);
 
-            lugar.setNome(nameView.getText().toString());
-            lugar.setRaio(raioBar.getProgress());
+            //Intent intent = new Intent(this, MainActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            //startActivity(intent);
 
-            //lugares.add(lugar);
-
-            Intent intent = new Intent(this, MainActivity.class);
-            //intent.putParcelableArrayListExtra(MainActivity.LIST_LOCATION, lugares);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
+            finish();
         }
     }
 
@@ -129,5 +130,25 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    private void save(boolean showToast) {
+        TextView nameView = (TextView) findViewById(R.id.editTextName);
+        SeekBar raioBar = (SeekBar) findViewById(R.id.radiusSeekBar);
+
+        lugar.setNome(nameView.getText().toString());
+        lugar.setRaio(raioBar.getProgress());
+
+        if (showToast) {
+            Toast.makeText(this, lugar.getNome() + " saved", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void remove(boolean showToast) {
+        lugares.remove(position);
+
+        if (showToast) {
+            Toast.makeText(this, lugar.getNome() + " removed", Toast.LENGTH_SHORT).show();
+        }
     }
 }

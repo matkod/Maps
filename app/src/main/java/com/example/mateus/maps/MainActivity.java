@@ -52,9 +52,6 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //ActionBar actionBar = getSupportActionBar();
-        //actionBar.setDisplayShowHomeEnabled(true);
-
         geoCoder = new Geocoder(this);
 
         gm = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
@@ -108,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_help) {
             return true;
         } else if (id == R.id.search) {
             //onSearchRequested();

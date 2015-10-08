@@ -50,11 +50,8 @@
         <activity
             android:name=".EditLocationActivity"
             android:label="@string/title_activity_create_location"
-            android:noHistory="true"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.mateus.maps.MainActivity" />
+            android:noHistory="true">
+
         </activity>
 
         <provider
@@ -64,11 +61,8 @@
 
         <activity
             android:name=".ListLocationActivity"
-            android:label="@string/title_activity_list_location"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.mateus.maps.MainActivity" />
+            android:label="@string/title_activity_list_location">
+
         </activity>
     </application>
 

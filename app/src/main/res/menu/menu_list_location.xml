@@ -1,14 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
-
-    <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_search_white_24dp"
-        android:title="@string/search_title"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView" />
+    tools:context="com.example.mateus.maps.ListLocationActivity">
 
     <item
         android:id="@+id/action_settings"
@@ -22,9 +15,4 @@
         android:title="@string/action_help"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_favorites"
-        android:orderInCategory="10"
-        android:title="@string/action_favorites"
-        app:showAsAction="never" />
 </menu>
