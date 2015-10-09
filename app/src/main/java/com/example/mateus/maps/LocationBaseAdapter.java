@@ -69,7 +69,7 @@ public class LocationBaseAdapter extends BaseAdapter {
 
         if (lugar != null) {
             viewHolder.textView1.setText(lugar.getNome());
-            viewHolder.textView2.setText(lugar.getRaio() + "m");
+            viewHolder.textView2.setText(String.format("%1$d m", lugar.getRaio()));
             viewHolder.switch1.setChecked(lugar.isActive());
         }
 

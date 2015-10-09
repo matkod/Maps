@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -37,7 +38,7 @@ public class PlaceProvider extends ContentProvider {
     // Defines a set of uris allowed with this content provider
     private static final UriMatcher mUriMatcher = buildUriMatcher();
     // Obtain browser key from https://code.google.com/apis/console
-    String mKey = "key=AIzaSyCzbVO1xA16R0WkJSiMjmRHUmc5GqBGr5g";
+    final String mKey = "key=AIzaSyCzbVO1xA16R0WkJSiMjmRHUmc5GqBGr5g";
 
     private static UriMatcher buildUriMatcher() {
 
@@ -56,7 +57,7 @@ public class PlaceProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         Cursor c = null;
 
@@ -169,19 +170,19 @@ public class PlaceProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -193,7 +194,7 @@ public class PlaceProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         // TODO Auto-generated method stub
         return 0;

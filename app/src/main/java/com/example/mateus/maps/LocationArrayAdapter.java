@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class LocationArrayAdapter extends ArrayAdapter<Lugar> {
 
-    HashMap<Lugar, Integer> mIdMap = new HashMap<Lugar, Integer>();
+    private HashMap<Lugar, Integer> mIdMap = new HashMap<Lugar, Integer>();
 
     public LocationArrayAdapter(Context context, ArrayList<Lugar> values) {
         super(context, R.layout.location_list_layout, values);

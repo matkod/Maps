@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         }
     }
 
-    public void drawLocations() {
+    private void drawLocations() {
         final int size = lugares.size();
 
         MarkerOptions markerOptions;
