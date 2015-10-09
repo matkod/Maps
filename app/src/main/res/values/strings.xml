@@ -17,5 +17,7 @@
     <string name="save_location">Save</string>
     <string name="title_activity_list_location">Favorites</string>
     <string name="action_remove">Remove</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 
 </resources>
