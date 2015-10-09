@@ -42,16 +42,6 @@
         android:text="@string/radius"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/radiusSeekBar"
-        android:layout_toEndOf="@+id/textViewRadius"
-        android:layout_toRightOf="@+id/textViewRadius"
-        android:text=" 0m"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <SeekBar
         android:id="@+id/radiusSeekBar"
         android:layout_width="fill_parent"

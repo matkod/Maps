@@ -13,7 +13,7 @@
     <string name="no">No</string>
     <string name="title_activity_create_location">Edit Location</string>
     <string name="name">Name</string>
-    <string name="radius">Radius</string>
+    <string name="radius">Radius: %1$d m</string>
     <string name="save_location">Save</string>
     <string name="title_activity_list_location">Favorites</string>
     <string name="action_remove">Remove</string>

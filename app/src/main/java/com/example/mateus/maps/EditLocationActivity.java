@@ -28,9 +28,9 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_location);
+        setContentView(R.layout.activity_edit_location);
 
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Button bt = (Button) findViewById(R.id.btSaveLocation);
         bt.setOnClickListener(this);
@@ -38,7 +38,7 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         radiusSeekbar = (SeekBar) findViewById(R.id.radiusSeekBar);
         radiusSeekbar.setOnSeekBarChangeListener(this);
 
-        result = (TextView) findViewById(R.id.tvResult);
+        result = (TextView) findViewById(R.id.textViewRadius);
 
         if (savedInstanceState != null) {
             Log.d("EditLocationActivity", "Carregando de savedInstanceState");
@@ -119,7 +119,7 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        result.setText(" " + progress + "m");
+        result.setText(String.format(getResources().getString(R.string.radius), progress));
     }
 
     @Override
