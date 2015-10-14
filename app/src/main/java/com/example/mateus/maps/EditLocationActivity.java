@@ -90,6 +90,9 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
             remove(true);
             finish();
             return true;
+        } else if (id == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
