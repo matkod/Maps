@@ -30,6 +30,7 @@ public class Lugar implements Parcelable {
         this.nome = nome;
         this.lat = lat;
         this.lng = lng;
+        raio = 500;
         marker = null;
         circle = null;
     }

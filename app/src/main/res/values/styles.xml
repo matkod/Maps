@@ -1,23 +1,26 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
+
+        <item name="searchViewStyle">@style/AppTheme.SearchView</item>
+
         <!-- Customize your theme here. -->
-        <item name="searchViewStyle">@style/MySearchViewStyle</item>
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:searchViewStyle" tools:targetApi="21">@style/AppTheme.SearchView</item>
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     </style>
 
     <!-- the theme applied to the application or activity -->
-    <style name="MyActionBar" parent="Theme.AppCompat">
-        <item name="android:windowActionBarOverlay">true</item>
+    <style name="AppTheme.ActionBar" parent="Theme.AppCompat">
+
     </style>
 
-    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
 
         <!-- Layout for query suggestion rows -->
         <item name="suggestionRowLayout">@layout/abc_search_dropdown_item_icons_2line</item>
 
-        <item name="closeIcon">@mipmap/ic_launcher</item>
+        <item name="closeIcon">@drawable/ic_delete_white_24dp</item>
     </style>
 
 </resources>

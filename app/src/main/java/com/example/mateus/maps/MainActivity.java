@@ -43,6 +43,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -50,7 +52,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLongClickListener, LoaderManager.LoaderCallbacks<Cursor>, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -80,10 +81,12 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
 
-    private GoogleMap gm;
+    private GoogleMap map;
     private Geocoder geoCoder;
 
     private ArrayList<Lugar> lugares;
+
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +95,13 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
 
         geoCoder = new Geocoder(this);
 
-        gm = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapfragment)).getMap();
-        gm.setOnMapLongClickListener(this);
-        gm.setOnMarkerClickListener(this);
-        gm.setMyLocationEnabled(true);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap map) {
+                setupMap(map);
+            }
+        });
 
         if (savedInstanceState != null) {
             Log.d(TAG, "Carregando de savedInstanceState");
@@ -115,8 +121,41 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
             createLocationSettingsRequest();
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    private void setupMap(GoogleMap map) {
+        this.map = map;
+        this.map.setOnMapLongClickListener(this);
+        this.map.setOnMarkerClickListener(this);
+        this.map.setMyLocationEnabled(true);
+        //map.setTrafficEnabled(true);
+        this.map.getUiSettings().setMyLocationButtonEnabled(true);
+        this.map.getUiSettings().setMapToolbarEnabled(false);
+        this.map.getUiSettings().setZoomControlsEnabled(true);
+
+        resetMap();
+    }
+
+    private void resetMap() {
+        if (map != null) {
+            map.clear();
+            drawLocations();
         }
     }
 
@@ -129,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
+                (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
@@ -160,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
             return true;
         } else if (id == R.id.action_help) {
             return true;
-        } else if (id == R.id.search) {
+        } else if (id == R.id.action_search) {
             //onSearchRequested();
             return true;
         } else if (id == R.id.action_favorites) {
@@ -184,9 +223,8 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         super.onResume();
 
         Log.d(TAG, "onResume");
-        gm.clear();
-        //clearLocations();
-        drawLocations();
+
+        resetMap();
     }
 
     @Override
@@ -228,28 +266,20 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
             markerOptions.position(new LatLng(l.getLat(), l.getLng()));
             markerOptions.title(l.getNome());
 
-            l.setMarker(gm.addMarker(markerOptions));
+            l.setMarker(map.addMarker(markerOptions));
 
-            l.setCircle(gm.addCircle(new CircleOptions()
+            int fillColor = Color.argb(150, 235, 235, 235);
+            if (l.isActive())
+                fillColor = Color.argb(150, 63, 81, 181);
+
+            l.setCircle(map.addCircle(new CircleOptions()
                     .center(new LatLng(l.getLat(), l.getLng()))
                     .radius(l.getRaio())
-                    .strokeWidth(1)
-                    .fillColor(Color.argb(120, 250, 250, 0))));
+                    .strokeWidth(0.2f)
+                    .fillColor(fillColor)));
 
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLat(), l.getLng()), 15);
-            gm.animateCamera(cameraUpdate);
-        }
-    }
-
-    private void clearLocations() {
-        int size = lugares.size();
-
-        for (int i = 0; i < size; ++i) {
-            Lugar l = lugares.get(i);
-            if (l.getMarker() != null)
-                l.getMarker().remove();
-            if (l.getCircle() != null)
-                l.getCircle().remove();
+            map.animateCamera(cameraUpdate);
         }
     }
 
@@ -274,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
                     map.invalidate();
                     txtsearch.setText(""); */
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()), 10);
-                gm.animateCamera(cameraUpdate);
+                map.animateCamera(cameraUpdate);
 
             } else {
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
@@ -337,17 +367,17 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
     private void showLocations(Cursor c) {
         MarkerOptions markerOptions;
         LatLng position = null;
-        gm.clear();
+        map.clear();
         while (c.moveToNext()) {
             markerOptions = new MarkerOptions();
             position = new LatLng(Double.parseDouble(c.getString(1)), Double.parseDouble(c.getString(2)));
             markerOptions.position(position);
             markerOptions.title(c.getString(0));
-            gm.addMarker(markerOptions);
+            map.addMarker(markerOptions);
         }
         if (position != null) {
             CameraUpdate cameraPosition = CameraUpdateFactory.newLatLng(position);
-            gm.animateCamera(cameraPosition);
+            map.animateCamera(cameraPosition);
         }
     }
 
@@ -473,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
     @Override
     public void onConnected(Bundle arg0) {
         // Once connected with google api, get the location
-        displayLocation();
+        //displayLocation();
 
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
@@ -515,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
                 positionMarker.remove();
             }
 
-            positionMarker = gm.addMarker(markerOptions);
+            positionMarker = map.addMarker(markerOptions);
 
             Log.d(TAG, latitude + ", " + longitude);
         } else {
@@ -557,7 +587,6 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
                 .setContentText("boa")
                 .setContentIntent(pIntent)
                 .setAutoCancel(true);
-
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

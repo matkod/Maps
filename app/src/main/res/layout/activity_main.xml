@@ -9,11 +9,9 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:id="@+id/mapfragment"
-        android:name="com.example.mateus.maps.MapFragment"
+        android:id="@+id/mapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        tools:layout="@layout/map_layout" />
-
+        android:layout_height="fill_parent" />
 
 </RelativeLayout>

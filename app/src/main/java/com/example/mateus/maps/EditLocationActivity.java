@@ -137,10 +137,9 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
     private void save(boolean showToast) {
         TextView nameView = (TextView) findViewById(R.id.editTextName);
-        SeekBar raioBar = (SeekBar) findViewById(R.id.radiusSeekBar);
 
         lugar.setNome(nameView.getText().toString());
-        lugar.setRaio(raioBar.getProgress());
+        lugar.setRaio(radiusSeekbar.getProgress());
 
         if (showToast) {
             Toast.makeText(this, lugar.getNome() + " saved", Toast.LENGTH_SHORT).show();
