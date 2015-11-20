@@ -18,5 +18,6 @@
     <string name="action_remove">Remove</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="active">Active</string>
 
 </resources>

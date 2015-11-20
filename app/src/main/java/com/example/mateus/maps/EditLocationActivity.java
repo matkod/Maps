@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,8 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
             radiusSeekbar.setProgress(lugar.getRaio());
             ((TextView) findViewById(R.id.editTextName)).setText(lugar.getNome());
 
+            Switch active = (Switch) findViewById(R.id.switchActive);
+            active.setChecked(lugar.isActive());
         }
     }
 
@@ -135,11 +138,19 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
     }
 
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        Log.d("back", "back");
+    }
+
     private void save(boolean showToast) {
         TextView nameView = (TextView) findViewById(R.id.editTextName);
+        Switch s1 = (Switch) findViewById(R.id.switchActive);
 
         lugar.setNome(nameView.getText().toString());
         lugar.setRaio(radiusSeekbar.getProgress());
+        lugar.setIsActive(s1.isChecked());
 
         if (showToast) {
             Toast.makeText(this, lugar.getNome() + " saved", Toast.LENGTH_SHORT).show();
