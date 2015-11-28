@@ -9,14 +9,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String NAME = "teste";
     private static final int VERSION = 1;
 
-    private static final String DICTIONARY_TABLE_CREATE =
+    private static final String TABLE_CREATE =
             "CREATE TABLE lugares (" +
                     "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "nome TEXT NOT NULL, " +
                     "lat REAL NOT NULL, " +
                     "lng REAL NOT NULL, " +
                     "active BOOLEAN NOT NULL, " +
-                    "raio INTEGER NOT NULL, " +
+                    "raio INTEGER NOT NULL " +
                     ");";
 
 
@@ -26,11 +26,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(TABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE lugares;");
+        onCreate(db);
     }
 }

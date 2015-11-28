@@ -20,20 +20,34 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
     private ArrayList<Lugar> lugares;
     private ListView listView;
 
+    private DatabaseLugar db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_location);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        lugares = LocationManager.getInstance().getLugares();
+        db = new DatabaseLugar(this);
+
         if (savedInstanceState != null) {
             final ArrayList<Lugar> tmp = savedInstanceState.getParcelableArrayList(MainActivity.LIST_LOCATION);
             if (tmp != null)
                 LocationManager.getInstance().setLugares(tmp);
         }
 
+        lugares = LocationManager.getInstance().getLugares();
+
+        if (lugares.isEmpty()) {
+            ArrayList<Lugar> tmp = db.buscar();
+
+            for (int i = 0; i < tmp.size(); ++i) {
+                lugares.add(tmp.get(i));
+            }
+        }
+
         listView = (ListView) findViewById(R.id.listView);
+
 
         //final ListAdapter adapter = new LocationArrayAdapter(this, lugares);
         //final StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, lugares);
@@ -126,7 +140,10 @@ public class ListLocationActivity extends AppCompatActivity implements AdapterVi
 
     private void removeLocation(int position) {
         //Toast.makeText(this, ((Lugar) parent.getItemAtPosition(position)).getNome(), Toast.LENGTH_SHORT).show();
+        db.excluir(lugares.get(position));
+
         lugares.remove(position);
+
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
 }

@@ -26,10 +26,14 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     private SeekBar radiusSeekbar;
     private TextView result;
 
+    private DatabaseLugar db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_location);
+
+        db = new DatabaseLugar(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -50,13 +54,22 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
 
         lugares = LocationManager.getInstance().getLugares();
 
+        if (lugares.isEmpty()) {
+            ArrayList<Lugar> tmp = db.buscar();
+
+            for (int i = 0; i < tmp.size(); ++i) {
+                lugares.add(tmp.get(i));
+            }
+        }
+
         LatLng latlng = getIntent().getParcelableExtra(MainActivity.CREATE_LOCATION);
         if (latlng != null) {
+            position = lugares.size() - 1;
+
             lugar = new Lugar("", latlng.latitude, latlng.longitude);
 
             lugares.add(lugar);
-
-            position = lugares.size() - 1;
+            db.inserir(lugar);
 
             Log.d("latlng", getIntent().getParcelableExtra(MainActivity.CREATE_LOCATION).toString());
         } else {
@@ -115,10 +128,6 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         if (id == R.id.btSaveLocation) {
             save(true);
 
-            //Intent intent = new Intent(this, MainActivity.class);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            //startActivity(intent);
-
             finish();
         }
     }
@@ -139,7 +148,7 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         super.onBackPressed();
         Log.d("back", "back");
     }
@@ -152,12 +161,16 @@ public class EditLocationActivity extends AppCompatActivity implements View.OnCl
         lugar.setRaio(radiusSeekbar.getProgress());
         lugar.setIsActive(s1.isChecked());
 
+        db.atualizar(lugar);
+
         if (showToast) {
             Toast.makeText(this, lugar.getNome() + " saved", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void remove(boolean showToast) {
+        db.excluir(lugar);
+
         lugares.remove(position);
 
         if (showToast) {

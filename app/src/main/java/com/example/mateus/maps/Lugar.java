@@ -18,6 +18,7 @@ public class Lugar implements Parcelable {
             return new Lugar[size];
         }
     };
+    private int id;
     private String nome;
     private double lat;
     private double lng;
@@ -25,6 +26,10 @@ public class Lugar implements Parcelable {
     private boolean isActive;
     private Marker marker;
     private Circle circle;
+
+    public Lugar() {
+        isActive = false;
+    }
 
     public Lugar(String nome, double lat, double lng) {
         this.nome = nome;
@@ -36,6 +41,7 @@ public class Lugar implements Parcelable {
     }
 
     public Lugar(Parcel p) {
+        id = p.readInt();
         nome = p.readString();
         lat = p.readDouble();
         lng = p.readDouble();
@@ -43,6 +49,14 @@ public class Lugar implements Parcelable {
         isActive = p.readByte() != 0;
         marker = null;
         circle = null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -108,6 +122,7 @@ public class Lugar implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(nome);
         dest.writeDouble(lat);
         dest.writeDouble(lng);

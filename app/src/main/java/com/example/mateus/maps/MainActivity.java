@@ -13,8 +13,6 @@ import android.content.IntentSender;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
@@ -51,7 +49,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLongClickListener, LoaderManager.LoaderCallbacks<Cursor>, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     private Location mLastLocation;
 
@@ -77,23 +74,24 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
     private LocationRequest mLocationRequest;
 
     // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 10; // 10 meters
+    private static final int UPDATE_INTERVAL = 10000; // 10 sec
+    private static final int FATEST_INTERVAL = 5000; // 5 sec
+    private static final int DISPLACEMENT = 10; // 10 meters
 
     private GoogleMap map;
-    private Geocoder geoCoder;
 
     private ArrayList<Lugar> lugares;
 
     private SupportMapFragment mapFragment;
+
+    private DatabaseLugar db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        geoCoder = new Geocoder(this);
+        db = new DatabaseLugar(this);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -111,6 +109,14 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         }
 
         lugares = LocationManager.getInstance().getLugares();
+
+        if (lugares.isEmpty()) {
+            ArrayList<Lugar> tmp = db.buscar();
+
+            for (int i = 0; i < tmp.size(); ++i) {
+                lugares.add(tmp.get(i));
+            }
+        }
 
         // First we need to check availability of play services
         if (checkPlayServices()) {
@@ -283,41 +289,6 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         }
     }
 
-    private void doSearch2(String query) {
-        Log.d("ACTION_SEARCH", query);
-
-        try {
-            List<Address> addresses = geoCoder.getFromLocationName(query, 5);
-
-            if (addresses.size() > 0) {
-                    /*Barcode.GeoPoint p = new Barcode.GeoPoint(1, (addresses.get(0).getLatitude() * 1E6),
-                             (addresses.get(0).getLongitude() * 1E6));
-
-                    controller.animateTo(p);
-                    controller.setZoom(12);
-
-                    MapOverlay mapOverlay = new MapOverlay();
-                    List<Overlay> listOfOverlays = map.getOverlays();
-                    listOfOverlays.clear();
-                    listOfOverlays.add(mapOverlay);
-
-                    map.invalidate();
-                    txtsearch.setText(""); */
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()), 10);
-                map.animateCamera(cameraUpdate);
-
-            } else {
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle("Google Map");
-                adb.setMessage("Please Provide the Proper Place");
-                adb.setPositiveButton("Close", null);
-                adb.show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onMapLongClick(LatLng latLng) {
         final LatLng fLatLng = latLng;
@@ -338,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapLo
         final Lugar l = new Lugar("", latLng.latitude, latLng.longitude);
 
         lugares.add(l);
+        db.inserir(l);
 
         Intent intent = new Intent(this, EditLocationActivity.class);
         intent.putExtra(EDIT_LOCATION, lugares.size() - 1);

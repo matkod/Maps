@@ -16,9 +16,13 @@ public class LocationBaseAdapter extends BaseAdapter {
 
     private final Context context;
 
+    private DatabaseLugar db;
+
     public LocationBaseAdapter(Context context, ArrayList<Lugar> list) {
         this.list = list;
         this.context = context;
+
+        db = new DatabaseLugar(context);
     }
 
     @Override
@@ -59,6 +63,7 @@ public class LocationBaseAdapter extends BaseAdapter {
                 public void onClick(View v) {
                     lugar.setIsActive(!lugar.isActive());
                     viewHolder.switch1.setChecked(lugar.isActive());
+                    db.atualizar(lugar);
                 }
             });
 
